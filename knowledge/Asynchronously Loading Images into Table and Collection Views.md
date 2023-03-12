@@ -1,41 +1,37 @@
 ---
 title: Asynchronously Loading Images into Table and Collection Views
-slug: 3105eb5b-a42c-add3-3945-a851d42a978c
+slug: "3105eb5b-a42c-add3-3945-a851d42a978c"
 published: true
 ---
 
 이미지를 비동기적으로 저장하고 가져옴으로써 당신의 앱을 더 반응성 있게 만든다. (?)
 이미지를 캐싱하면 테이블과 컬렉션 뷰를 빠르게 인스턴스화하고 빠른 스크롤에 반응할 수 있다.
 
-* 왜 저기서 메인 큐에 대해서 가져가야할까..
+- 왜 저기서 메인 큐에 대해서 가져가야할까..
+- `@escaping` 클로저 이기 때문에 다른 스레드에서 실행될 수 있다는 근거...가...
+- `@escaping` 함수가 종료되고 나서도 실행될 수 있는 클로저로 알고 있고...
 
-* `@escaping` 클로저 이기 때문에 다른 스레드에서 실행될 수 있다는 근거...가...
+- 굳이 스위프트에서 @escaping 클로저랑 아닌 클로저를 왜 굳이 나눠야 했을까?
+  - 캡처라는 특성을 가지는 클로저
+  - 클로저 자신이 실행될 때 자신 안에 들어 있는 레퍼런스들을 보존하기 위해서
+  - 클로저가 미래에 어느 시점에 실행이 될텐테 클로저 안에 있는 인스턴스들은 계속 살려둬야 하기 때문에 레퍼런스 카운트를 관리하기 위해서..
+  - 내가 이 순간에 끝날 클로저다 (비탈출 클로저)
+  - 명시하는 이유
+    - 클로저의 캡처라는 특성 때문에
+    - 클로저 내의 레퍼런스의 참조 카운트를 관리하기 위한 힌트
+  - 언제까지 살려둬야 하는 힌트가 없으면 컴파일 에러가 난다..
 
-* `@escaping` 함수가 종료되고 나서도 실행될 수 있는 클로저로 알고 있고...
+> 개 어 려 워
 
-* 굳이 스위프트에서 @escaping 클로저랑 아닌 클로저를 왜 굳이 나눠야 했을까?
-  
-  * 캡처라는 특성을 가지는 클로저
-  * 클로저 자신이 실행될 때 자신 안에 들어 있는 레퍼런스들을 보존하기 위해서
-  * 클로저가 미래에 어느 시점에 실행이 될텐테 클로저 안에 있는 인스턴스들은 계속 살려둬야 하기 때문에 레퍼런스 카운트를 관리하기 위해서..
-  * 내가 이 순간에 끝날 클로저다 (비탈출 클로저)
-  * 명시하는 이유
-    * 클로저의 캡처라는 특성 때문에
-    * 클로저 내의 레퍼런스의 참조 카운트를 관리하기 위한 힌트
-  * 언제까지 살려둬야 하는 힌트가 없으면 컴파일 에러가 난다..
+- 테이블뷰를 스크롤해버리면 어떤 일이 발생함?
+  - 셀은 재사용되기 때문에
+  - 이미 이 셀은 큐에 들어가있거나 다른곳에서 ㅅ재사용되고 있을 수 있음
+  - 지금 시점에 이 친구의 이미지와 request를 요청할 때의 이미지를 비교
+    - `img != fetchedItem.image`
+- 다른 스레드에서 실행될 가능성을 염두해두고, UI 를 업데이트하는 코드를 main thread에 태운다.,.,
+- 
 
- > 
- > 개 어 려 워
-
-* 테이블뷰를 스크롤해버리면 어떤 일이 발생함?
-  * 셀은 재사용되기 때문에
-  * 이미 이 셀은 큐에 들어가있거나 다른곳에서 ㅅ재사용되고 있을 수 있음
-  * 지금 시점에 이 친구의 이미지와 request를 요청할 때의 이미지를 비교
-    * `img != fetchedItem.image`
-* 다른 스레드에서 실행될 가능성을 염두해두고, UI 를 업데이트하는 코드를 main thread에 태운다.,.,
-* 
-
-````swift
+```swift
 /// - Tag: cache
 // Returns the cached image if available, otherwise asynchronously loads and caches it.
 // 캐싱된 이미지를 이용할 수 있으면 리턴하고, 그렇지 않으면 비동기적으로 이미지를 가져오고 캐싱한다.
@@ -84,12 +80,12 @@ final func load(url: NSURL, item: Item, completion: @escaping (Item, UIImage?) -
         }
     }.resume()
 }
-````
+```
 
 ## 참고 자료
 
-* [Asynchronously Loading Images into Table and Collection Views | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/views_and_controls/table_views/asynchronously_loading_images_into_table_and_collection_views)
+- [Asynchronously Loading Images into Table and Collection Views | Apple Developer Documentation](https://developer.apple.com/documentation/uikit/views_and_controls/table_views/asynchronously_loading_images_into_table_and_collection_views)
 
 ## 태그
 
-\#iOS/UITableView #iOS/UICollectionView #Swift/NSCache
+#iOS/UITableView #iOS/UICollectionView #Swift/NSCache
