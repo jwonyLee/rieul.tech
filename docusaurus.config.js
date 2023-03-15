@@ -42,6 +42,7 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/jwonylee/rieul.tech/tree/main/',
+          showLastUpdateTime: true,
         },
         blog: {
           path: 'thought',
@@ -68,6 +69,7 @@ const config = {
         routeBasePath: 'daily',
         editUrl: 'https://github.com/jwonylee/rieul.tech/tree/main/',
         sidebarPath: require.resolve('./daily-sidebars.js'),
+        showLastUpdateTime: true,
       },
     ],
   ],
@@ -83,9 +85,9 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: '🌩️ 먹구름',
         logo: {
-          alt: 'My Site Logo',
+          alt: '🌩️ 먹구름 Logo',
           src: 'img/logo.svg',
         },
         items: [
@@ -122,6 +124,7 @@ const config = {
 async function createConfig() {
   const lightTheme = (await import('./src/utils/prismLight.mjs')).default;
   const darkTheme = (await import('./src/utils/prismDark.mjs')).default;
+  // @ts-ignore
   config.themeConfig.prism.theme = lightTheme;
   // @ts-expect-error: we know it exists, right
   config.themeConfig.prism.darkTheme = darkTheme;
