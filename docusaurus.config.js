@@ -1,9 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: '🌩️ 먹구름',
@@ -70,6 +67,7 @@ const config = {
         path: 'daily',
         routeBasePath: 'daily',
         editUrl: 'https://github.com/jwonylee/rieul.tech/tree/main/',
+        sidebarPath: require.resolve('./daily-sidebars.js'),
       },
     ],
   ],
@@ -116,10 +114,18 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} rieul.tech Built with Docusaurus.`,
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        additionalLanguages: ['swift'],
       },
     }),
 };
 
-module.exports = config;
+async function createConfig() {
+  const lightTheme = (await import('./src/utils/prismLight.mjs')).default;
+  const darkTheme = (await import('./src/utils/prismDark.mjs')).default;
+  config.themeConfig.prism.theme = lightTheme;
+  // @ts-expect-error: we know it exists, right
+  config.themeConfig.prism.darkTheme = darkTheme;
+  return config;
+}
+
+module.exports = createConfig;
